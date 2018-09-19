@@ -4,6 +4,9 @@ SilverCart\Model\Order\ShoppingCart:
 SilverCart\Model\Pages\CartPageController:
   extensions:
     - SilverCart\Matomo\Extensions\Pages\CartPageControllerExtension
+SilverCart\Model\Pages\CheckoutStepController:
+  extensions:
+    - SilverCart\Matomo\Extensions\Pages\CheckoutStepControllerExtension
 SilverCart\Model\Pages\PageController:
   extensions:
     - SilverCart\Matomo\Extensions\Pages\PageControllerExtension

@@ -4,6 +4,7 @@ namespace SilverCart\Matomo\Core;
 
 use SilverCart\Dev\Tools;
 use SilverCart\Model\Customer\Customer;
+use SilverCart\Model\Order\Order;
 use SilverCart\Model\Pages\ProductGroupPage;
 use SilverCart\Model\Product\Product;
 use SilverStripe\View\ViewableData;
@@ -23,12 +24,20 @@ use SilverStripe\View\ViewableData;
 class Matomo
 {
     const SESSION_KEY                      = 'SilverCart.Matomo';
+    const SESSION_KEY_ORDER_ID             = 'SilverCart.Matomo.OrderID';
     const SESSION_KEY_PRODUCT_ID           = 'SilverCart.Matomo.ProductID';
     const SESSION_KEY_PRODUCT_GROUP_ID     = 'SilverCart.Matomo.ProductGroupID';
     const SESSION_KEY_TRACK_CART           = 'SilverCart.Matomo.TrackCart';
+    const SESSION_KEY_TRACK_ORDER          = 'SilverCart.Matomo.TrackOrder';
     const SESSION_KEY_TRACK_PRODUCT_DETAIL = 'SilverCart.Matomo.TrackProductDetail';
     const SESSION_KEY_TRACK_PRODUCT_GROUP  = 'SilverCart.Matomo.TrackProductGroup';
     
+    /**
+     * Order context to track.
+     *
+     * @var Order
+     */
+    protected static $order = null;
     /**
      * Product context to track detail page view for.
      *
@@ -41,6 +50,12 @@ class Matomo
      * @var ProductGroupPage
      */
     protected static $product_group = null;
+    /**
+     * Determines whether to track an order for the current request or not.
+     *
+     * @var bool
+     */
+    protected static $track_order = null;
     /**
      * Determines whether to track product detail view for the current request 
      * or not.
@@ -62,6 +77,42 @@ class Matomo
      * @var bool
      */
     protected static $track_shopping_cart = null;
+    
+    /**
+     * Returns the order to track.
+     * 
+     * @return Order
+     */
+    public static function get_order()
+    {
+        if (is_null(self::$order)) {
+            $orderID = Tools::Session()->get(self::SESSION_KEY_ORDER_ID);
+            if (is_numeric($orderID)) {
+                self::$order = Order::get()->byID((int) $orderID);
+            }
+        }
+        return self::$order;
+    }
+    
+    /**
+     * Sets the order to track.
+     * 
+     * @param Order $order Order
+     * 
+     * @return void
+     */
+    public static function set_order(Order $order = null)
+    {
+        $orderID = 0;
+        if ($order instanceof Order
+         && $order->exists()
+        ) {
+            $orderID = $order->ID;
+        }
+        Tools::Session()->set(self::SESSION_KEY_ORDER_ID, $orderID);
+        Tools::saveSession();
+        self::$order = $order;
+    }
     
     /**
      * Returns the product to track detail view for.
@@ -133,6 +184,58 @@ class Matomo
         Tools::Session()->set(self::SESSION_KEY_PRODUCT_GROUP_ID, $productGroupID);
         Tools::saveSession();
         self::$product_group = $product_group;
+    }
+    
+    /**
+     * Enables the order tracking.
+     * 
+     * @param Order $order Order to track
+     * 
+     * @return void
+     */
+    public static function do_track_order(Order $order = null)
+    {
+        self::set_track_order(true, $order);
+    }
+    
+    /**
+     * Returns whether to track the order or not.
+     * Alias for self::get_track_order().
+     * 
+     * @return bool
+     */
+    public static function track_order()
+    {
+        return self::get_track_order();
+    }
+    
+    /**
+     * Returns whether to track the order or not.
+     * 
+     * @return bool
+     */
+    public static function get_track_order()
+    {
+        if (is_null(self::$track_order)) {
+            self::$track_order = (bool) Tools::Session()->get(self::SESSION_KEY_TRACK_ORDER);
+        }
+        return self::$track_order;
+    }
+
+    /**
+     * Sets whether to track the order or not.
+     * 
+     * @param bool  $track_order Track order?
+     * @param Order $order       Order to track
+     * 
+     * @return void
+     */
+    public static function set_track_order($track_order, Order $order = null)
+    {
+        Tools::Session()->set(self::SESSION_KEY_TRACK_ORDER, $track_order);
+        Tools::saveSession();
+        self::$track_order = $track_order;
+        self::set_order($order);
     }
     
     /**
@@ -297,6 +400,7 @@ class Matomo
      */
     public static function reset()
     {
+        self::set_track_order(false);
         self::set_track_product_detail_view(false);
         self::set_track_product_group_view(false);
         self::set_track_shopping_cart(false);
@@ -317,6 +421,11 @@ class Matomo
             $trackingCode .= $viewable->customise([
                 'Cart' => $customer->getCart(),
             ])->renderWith(self::class . '_TrackCart');
+        }
+        if (self::track_order()) {
+            $trackingCode .= $viewable->customise([
+                'Order' => self::get_order(),
+            ])->renderWith(self::class . '_TrackOrder');
         }
         if (self::track_product_detail_view()) {
             $trackingCode .= $viewable->customise([

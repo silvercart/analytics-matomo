@@ -3,11 +3,7 @@
 _paq.push(['addEcommerceItem',
     "{$Product.ProductNumberShop}",
     "{$Title}",
-<% if $Product.ProductGroup.MatomoBreadcrumbTitle == $Product.ProductGroup.Title %>
-    "{$Product.ProductGroup.Title}",
-<% else %>
-    ["{$Product.ProductGroup.Title}", "{$Product.ProductGroup.MatomoBreadcrumbTitle.RAW}"],
-<% end_if %>
+    "{$Product.ProductGroup.MatomoBreadcrumbTitle}",
     {$getPrice(true).Amount},
     {$Quantity}
 ]);
