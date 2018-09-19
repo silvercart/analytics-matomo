@@ -1,0 +1,3 @@
+SilverCart\Model\Pages\ProductGroupPageController:
+  extensions:
+    - SilverCart\Matomo\Extensions\Pages\ProductGroupPageControllerExtension
