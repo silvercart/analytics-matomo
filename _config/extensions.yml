@@ -7,6 +7,9 @@ SilverCart\Model\Pages\CartPageController:
 SilverCart\Model\Pages\PageController:
   extensions:
     - SilverCart\Matomo\Extensions\Pages\PageControllerExtension
+SilverCart\Model\Pages\ProductGroupPage:
+  extensions:
+    - SilverCart\Matomo\Extensions\Pages\ProductGroupPageExtension
 SilverCart\Model\Pages\ProductGroupPageController:
   extensions:
     - SilverCart\Matomo\Extensions\Pages\ProductGroupPageControllerExtension

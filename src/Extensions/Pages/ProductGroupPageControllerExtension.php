@@ -2,10 +2,12 @@
 
 namespace SilverCart\Matomo\Extensions\Pages;
 
-use SilverCart\Model\Pages\ProductGroupHolder;
+use SilverCart\Matomo\Core\Matomo;
 use SilverStripe\Core\Extension;
 
 /**
+ * ProductGroupPageController extension. Enables the Matomo product group or 
+ * detail view tracking code.
  * 
  * @package SilverCart
  * @subpackage Matomo_Extensions_Pages
@@ -17,51 +19,36 @@ use SilverStripe\Core\Extension;
 class ProductGroupPageControllerExtension extends Extension
 {
     /**
-     * Delimiter character(s) to use as product group title separation.
-     *
-     * @var string
-     */
-    private static $matomo_breadcrumb_delimiter = ' > ';
-
-    /**
-     * Adds te Matomo tracking code for product group or detail pages.
-     * 
-     * @param string $content Content to update.
+     * Adds te Matomo tracking code for product group pages if necessary.
      * 
      * @return void
      * 
      * @author Sebastian Diel <sdiel@pixeltricks.de>
      * @since 19.09.2018
      */
-    public function updateFooterCustomHtmlContent(&$content)
+    public function onAfterInit()
     {
         $ctrl = $this->owner;
         /* @var $ctrl \SilverCart\Model\Pages\ProductGroupPageController */
-        if ($ctrl->isProductDetailView()) {
-            $content .= $ctrl->renderWith(self::class . "_Detail");
-        } else {
-            $content .= $ctrl->renderWith(self::class);
+        if (!$ctrl->isProductDetailView()) {
+            Matomo::do_track_product_group_view($ctrl->data());
         }
     }
     
     /**
-     * Returns the title including the parent product group titles to have a 
-     * unique Matomo reference.
+     * Adds te Matomo tracking code for product detail pages if necessary.
      * 
-     * @return string
+     * @return void
      * 
      * @author Sebastian Diel <sdiel@pixeltricks.de>
      * @since 19.09.2018
      */
-    public function MatomoBreadcrumbTitle()
+    public function onBeforeRenderProductDetailView()
     {
         $ctrl = $this->owner;
         /* @var $ctrl \SilverCart\Model\Pages\ProductGroupPageController */
-        $items = $ctrl->data()->getBreadcrumbItems(20, ProductGroupHolder::class);
-        $map   = $items->map('ID', 'Title')->toArray();
         if ($ctrl->isProductDetailView()) {
-            array_pop($map);
+            Matomo::do_track_product_detail_view($ctrl->getProduct());
         }
-        return implode($ctrl->config()->get('matomo_breadcrumb_delimiter'), $map);
     }
 }
