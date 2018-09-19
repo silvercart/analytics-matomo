@@ -1,3 +1,15 @@
+SilverCart\Model\Order\ShoppingCart:
+  extensions:
+    - SilverCart\Matomo\Extensions\Order\ShoppingCartExtension
+SilverCart\Model\Pages\CartPageController:
+  extensions:
+    - SilverCart\Matomo\Extensions\Pages\CartPageControllerExtension
+SilverCart\Model\Pages\PageController:
+  extensions:
+    - SilverCart\Matomo\Extensions\Pages\PageControllerExtension
 SilverCart\Model\Pages\ProductGroupPageController:
   extensions:
     - SilverCart\Matomo\Extensions\Pages\ProductGroupPageControllerExtension
+SilverCart\Model\Product\Product:
+  extensions:
+    - SilverCart\Matomo\Extensions\Product\ProductExtension
