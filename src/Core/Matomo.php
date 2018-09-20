@@ -7,6 +7,7 @@ use SilverCart\Model\Customer\Customer;
 use SilverCart\Model\Order\Order;
 use SilverCart\Model\Pages\ProductGroupPage;
 use SilverCart\Model\Product\Product;
+use SilverStripe\Security\Member;
 use SilverStripe\View\ViewableData;
 
 /**
@@ -417,7 +418,9 @@ class Matomo
         $viewable     = ViewableData::singleton();
         $trackingCode = '';
         
-        if (self::track_shopping_cart()) {
+        if (self::track_shopping_cart()
+         && $customer instanceof Member
+         && $customer->exists()) {
             $trackingCode .= $viewable->customise([
                 'Cart' => $customer->getCart(),
             ])->renderWith(self::class . '_TrackCart');
