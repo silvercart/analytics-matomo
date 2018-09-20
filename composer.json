@@ -3,7 +3,7 @@
     "type": "silverstripe-module",
     "description": "Matomo ecommerce tracking module for the SilverCart ecommerce module for SilverStripe",
     "homepage": "http://www.silvercart.org",
-    "license": "LGPL-3.0",
+    "license": "LGPL-3.0-or-later",
     "keywords": ["silverstripe", "silvercart", "ecommerce", "shop", "webshop", "online shop", "matomo", "matomo ecommerce", "matomo analytics", "analytics", "tracking"],
     "authors": [
         {
