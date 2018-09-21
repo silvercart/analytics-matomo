@@ -19,3 +19,6 @@ SilverCart\Model\Pages\ProductGroupPageController:
 SilverCart\Model\Product\Product:
   extensions:
     - SilverCart\Matomo\Extensions\Product\ProductExtension
+SilverStripe\SiteConfig\SiteConfig:
+  extensions:
+    - SilverCart\Matomo\Extensions\Config\SiteConfigExtension
