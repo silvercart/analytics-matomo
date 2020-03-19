@@ -6,6 +6,7 @@ use SilverCart\Dev\Tools;
 use SilverCart\Model\Customer\Customer;
 use SilverCart\Model\Order\Order;
 use SilverCart\Model\Pages\ProductGroupPage;
+use SilverCart\Model\Pages\Page;
 use SilverCart\Model\Product\Product;
 use SilverStripe\Security\Member;
 use SilverStripe\View\ViewableData;
@@ -48,7 +49,7 @@ class Matomo
     /**
      * Product group context to track detail page view for.
      *
-     * @var ProductGroupPage
+     * @var Page
      */
     protected static $product_group = null;
     /**
@@ -154,14 +155,14 @@ class Matomo
     /**
      * Returns the product group to track detail view for.
      * 
-     * @return ProductGroupPage
+     * @return Page
      */
     public static function get_product_group()
     {
         if (is_null(self::$product_group)) {
             $productGroupID = Tools::Session()->get(self::SESSION_KEY_PRODUCT_GROUP_ID);
             if (is_numeric($productGroupID)) {
-                self::$product_group = ProductGroupPage::get()->byID((int) $productGroupID);
+                self::$product_group = Page::get()->byID((int) $productGroupID);
             }
         }
         return self::$product_group;
@@ -170,14 +171,14 @@ class Matomo
     /**
      * Sets the product group to track detail view for.
      * 
-     * @param ProductGroupPage $product_group Product group
+     * @param Page $product_group Product group
      * 
      * @return void
      */
-    public static function set_product_group(ProductGroupPage $product_group = null)
+    public static function set_product_group(Page $product_group = null)
     {
         $productGroupID = 0;
-        if ($product_group instanceof ProductGroupPage
+        if ($product_group instanceof Page
          && $product_group->exists()
         ) {
             $productGroupID = $product_group->ID;
@@ -294,11 +295,11 @@ class Matomo
     /**
      * Enables the product group view tracking.
      * 
-     * @param ProductGroupPage $product_group Product group
+     * @param Page $product_group Product group
      * 
      * @return void
      */
-    public static function do_track_product_group_view(ProductGroupPage $product_group = null)
+    public static function do_track_product_group_view(Page $product_group = null)
     {
         self::set_track_product_group_view(true, $product_group);
     }
@@ -330,12 +331,12 @@ class Matomo
     /**
      * Sets whether to track the product group view or not.
      * 
-     * @param bool             $track_product_group_view Track product group view?
-     * @param ProductGroupPage $product_group            Product group
+     * @param bool $track_product_group_view Track product group view?
+     * @param Page $product_group            Product group
      * 
      * @return void
      */
-    public static function set_track_product_group_view($track_product_group_view, ProductGroupPage $product_group = null)
+    public static function set_track_product_group_view($track_product_group_view, Page $product_group = null)
     {
         Tools::Session()->set(self::SESSION_KEY_TRACK_PRODUCT_GROUP, $track_product_group_view);
         Tools::saveSession();
