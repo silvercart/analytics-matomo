@@ -1,7 +1,8 @@
 <?php
 
-namespace SilverCart\Matomo\Extensions\Config;
+namespace SilverCart\Matomo\Extensions\CookieConsent;
 
+use SilverCart\Model\CookieConsent\ExternalResource;
 use SilverStripe\ORM\DataExtension;
 
 /**
@@ -12,8 +13,10 @@ use SilverStripe\ORM\DataExtension;
  * @since 21.09.2018
  * @copyright 2018 pixeltricks GmbH
  * @license see license file in modules root directory
+ * 
+ * @property ExternalResource $owner Owner
  */
-class SiteConfigExtension extends DataExtension
+class ExternalResourceExtension extends DataExtension
 {
     /**
      * Removes the "_paq.push(['trackPageView'])" Javascript call out of the 
@@ -24,16 +27,18 @@ class SiteConfigExtension extends DataExtension
      * The "_paq.push(['trackPageView'])" call will happen independent of any
      * eCommerce related action.
      * 
-     * @param string $matomoTrackingCode The Matomo tracking code to update
+     * @param string &$code The code to update
      * 
      * @return void
      * 
      * @author Sebastian Diel <sdiel@pixeltricks.de>
      * @since 21.09.2018
      */
-    public function updateMatomoTrackingCode(&$matomoTrackingCode)
+    public function updateCode(string &$code) : void
     {
-        $matomoTrackingCode = str_replace("_paq.push(['trackPageView']);", "", $matomoTrackingCode);
-        $matomoTrackingCode = str_replace("_paq.push(['trackPageView'])", "",  $matomoTrackingCode);
+        if ($this->owner->Name === ExternalResource::RESOURCE_MATOMO_TRACKING_CODE) {
+            $code = str_replace("_paq.push(['trackPageView']);", "", $code);
+            $code = str_replace("_paq.push(['trackPageView'])", "",  $code);
+        }
     }
 }
