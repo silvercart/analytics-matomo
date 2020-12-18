@@ -3,7 +3,7 @@
 namespace SilverCart\Matomo\Extensions\Pages;
 
 use SilverCart\Matomo\Core\Matomo;
-use SilverStripe\Core\Extension;
+use SilverCart\Matomo\Extensions\Control\ControllerExtension;
 
 /**
  * PageController extension. Adds the Matomo eCommerce tracking code if necessary.
@@ -14,8 +14,10 @@ use SilverStripe\Core\Extension;
  * @since 19.09.2018
  * @copyright 2018 pixeltricks GmbH
  * @license see license file in modules root directory
+ * 
+ * @property \SilverCart\Model\Pages\PageController $owner Owner
  */
-class PageControllerExtension extends Extension
+class PageControllerExtension extends ControllerExtension
 {
     /**
      * Adds the Matomo eCommerce tracking code if necessary.
@@ -27,7 +29,7 @@ class PageControllerExtension extends Extension
      * @author Sebastian Diel <sdiel@pixeltricks.de>
      * @since 19.09.2018
      */
-    public function updateFooterCustomHtmlContent(&$content)
+    public function updateFooterCustomHtmlContent(&$content) : void
     {
         $content .= Matomo::get_ecommerce_tracking_code();
         Matomo::reset();

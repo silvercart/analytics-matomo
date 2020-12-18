@@ -22,3 +22,6 @@ SilverCart\Model\Product\Product:
 SilverCart\Model\CookieConsent\ExternalResource:
   extensions:
     - SilverCart\Matomo\Extensions\CookieConsent\ExternalResourceExtension
+SilverStripe\Control\Controller:
+  extensions:
+    - SilverCart\Matomo\Extensions\Control\ControllerExtension

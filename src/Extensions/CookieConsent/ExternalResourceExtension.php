@@ -2,8 +2,11 @@
 
 namespace SilverCart\Matomo\Extensions\CookieConsent;
 
+use Broarm\CookieConsent\CookieConsent;
 use SilverCart\Model\CookieConsent\ExternalResource;
+use SilverStripe\Control\Controller;
 use SilverStripe\ORM\DataExtension;
+use SilverStripe\SiteConfig\SiteConfigLeftAndMain;
 
 /**
  * 
@@ -36,9 +39,32 @@ class ExternalResourceExtension extends DataExtension
      */
     public function updateCode(string &$code) : void
     {
-        if ($this->owner->Name === ExternalResource::RESOURCE_MATOMO_TRACKING_CODE) {
-            $code = str_replace("_paq.push(['trackPageView']);", "", $code);
-            $code = str_replace("_paq.push(['trackPageView'])", "",  $code);
+        if (Controller::curr() instanceof SiteConfigLeftAndMain) {
+            return;
         }
+        if ($this->owner->Name === ExternalResource::RESOURCE_MATOMO_TRACKING_CODE) {
+            $replacement = '';
+            if (class_exists(CookieConsent::class)) {
+                $cookieGroup = $this->owner->CookieGroup();
+                /* @var $cookieGroup \Broarm\CookieConsent\Model\CookieGroup */
+                if ($cookieGroup->exists()
+                 && !CookieConsent::check($cookieGroup->ConfigName)
+                ) {
+                    $replacement = "_paq.push(['disableCookies']);";
+                }
+            }
+            $code = str_replace("_paq.push(['trackPageView']);", $replacement, $code);
+            $code = str_replace("_paq.push(['trackPageView'])", $replacement,  $code);
+        }
+    }
+    
+    /**
+     * Matomo tracking can be used without cookies.
+     * 
+     * @return bool
+     */
+    public function updateCanBeRequiredWithoutCookies() : ?bool
+    {
+        return $this->owner->Name === ExternalResource::RESOURCE_MATOMO_TRACKING_CODE;
     }
 }
