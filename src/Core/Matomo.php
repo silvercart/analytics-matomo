@@ -25,6 +25,8 @@ use SilverStripe\View\ViewableData;
  */
 class Matomo
 {
+    use \SilverStripe\Core\Config\Configurable;
+    
     const SESSION_KEY                      = 'SilverCart.Matomo';
     const SESSION_KEY_ORDER_ID             = 'SilverCart.Matomo.OrderID';
     const SESSION_KEY_PRODUCT_ID           = 'SilverCart.Matomo.ProductID';
@@ -34,6 +36,13 @@ class Matomo
     const SESSION_KEY_TRACK_PRODUCT_DETAIL = 'SilverCart.Matomo.TrackProductDetail';
     const SESSION_KEY_TRACK_PRODUCT_GROUP  = 'SilverCart.Matomo.TrackProductGroup';
     
+    /**
+     * Determines whether to track without using cookies if the related cookie
+     * group wasn't accepted by the customer.
+     *
+     * @var bool
+     */
+    private static $enable_cookieless_tracking = false;
     /**
      * Order context to track.
      *

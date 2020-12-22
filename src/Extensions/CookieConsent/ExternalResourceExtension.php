@@ -3,6 +3,7 @@
 namespace SilverCart\Matomo\Extensions\CookieConsent;
 
 use Broarm\CookieConsent\CookieConsent;
+use SilverCart\Matomo\Core\Matomo;
 use SilverCart\Model\CookieConsent\ExternalResource;
 use SilverStripe\Control\Controller;
 use SilverStripe\ORM\DataExtension;
@@ -65,6 +66,7 @@ class ExternalResourceExtension extends DataExtension
      */
     public function updateCanBeRequiredWithoutCookies() : ?bool
     {
-        return $this->owner->Name === ExternalResource::RESOURCE_MATOMO_TRACKING_CODE;
+        return $this->owner->Name === ExternalResource::RESOURCE_MATOMO_TRACKING_CODE
+            && Matomo::config()->enable_cookieless_tracking;
     }
 }
