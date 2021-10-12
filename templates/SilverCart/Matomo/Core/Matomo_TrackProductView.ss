@@ -2,8 +2,8 @@
     <% with $Product %>
 _paq.push(['setEcommerceView',
     "{$ProductNumberShop}",
-    "{$Title}",
-    "{$ProductGroup.MatomoBreadcrumbTitle.RAW}",
+    "{$Title.ATT}",
+    "{$ProductGroup.MatomoBreadcrumbTitle.ATT}",
     {$Price.Amount}
 ]);
     <% end_with %>
